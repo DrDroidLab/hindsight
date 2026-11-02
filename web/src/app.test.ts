@@ -141,6 +141,10 @@ test("setup key survives rendering; cookie review preserves conflicts and separa
   };
   await import("./app");
   await until(() => !!query("#auth-form"));
+  // Browsers compile pattern attributes with the `v` flag; an invalid one is silently ignored.
+  const team = new RegExp(`^(?:${query('[name="team"]').getAttribute("pattern")})$`, "v");
+  assert.ok(team.test("platform") && team.test("sre-2"));
+  assert.ok(!team.test("Platform") && !team.test("-ops") && !team.test("a_b"));
   for (const [name, value] of Object.entries({
     token: "synthetic-token",
     name: "Demo Reviewer",

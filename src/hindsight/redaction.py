@@ -33,7 +33,15 @@ class Redactor:
             ),
             ("url-credentials", r"(?i)(?<=://)[^\s/@:]+:[^\s/@]+@"),
             ("email", r"\b[A-Za-z0-9.!#$%&\x27*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"),
-            ("customer-id", r"(?i)\b(?:customer|cust|tenant)[_-](?:id[_:= -]*)?[A-Za-z0-9]{4,}\b"),
+            (
+                "customer-id",
+                # Prefixed IDs, Stripe-style cus_ IDs, and "customer 12345" / "tenant id: a1b2"
+                # forms; the spaced form needs a digit so prose like "customer service" survives.
+                r"(?i)\b(?:(?:customer|cust|tenant)[_-](?:id[_:= -]*)?[A-Za-z0-9]{4,}"
+                r"|cus_[A-Za-z0-9]{6,}"
+                r"|(?:customer|cust|tenant)(?:[ _-]?id)?(?:\s*[:=#]\s*|\s+)"
+                r"(?=[A-Za-z0-9-]*\d)[A-Za-z0-9-]{4,})\b",
+            ),
             ("ip", r"(?<![\w.])(?:\d{1,3}\.){3}\d{1,3}(?![\w.])"),
             ("ipv6", r"(?<![\w:])(?:[0-9a-fA-F]{0,4}:){2,}[0-9a-fA-F:]{0,39}(?![\w:])"),
         ]

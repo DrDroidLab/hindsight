@@ -74,6 +74,14 @@ def test_redaction_and_idempotence():
     for raw in ("human@example.test", "swordfish", "user:pass", "10.2.3.4", "2001:db8::1", "ghp_"):
         assert raw not in clean
     assert redactor.redact(clean) == clean
+    customers = "cus_9s8d7f6g5h cust_ab12 customer 12345 tenant id: a1b2c3 customer_id=zz99"
+    clean = redactor.redact(customers)
+    for raw in ("9s8d7f6g5h", "ab12", "12345", "a1b2c3", "zz99"):
+        assert raw not in clean
+    assert clean.count("[REDACTED:customer-id]") == 5
+    assert redactor.redact(clean) == clean
+    prose = "Customer service escalated; the tenant migration is done."
+    assert redactor.redact(prose) == prose
     identifier = str(uuid.uuid4())
     assert (
         redactor.clean({"id": identifier, "created_at": "2026-01-01T00:00:00Z"})["id"] == identifier
