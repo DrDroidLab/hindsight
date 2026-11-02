@@ -1,3 +1,8 @@
+---
+description: >-
+  Schemas for Hindsight's git-stored knowledge: services, runbooks with stable steps, clues, skills, incidents and outcomes, plus team scopes and trust states.
+---
+
 # Content model v1
 
 Git Markdown is canonical. A validated regular UTF-8 file has bounded safe YAML frontmatter and a human-editable Markdown body. No YAML aliases/custom tags, duplicate IDs, symlinks, submodules, arbitrary binary attachments, traversal paths, or hidden control paths. Body HTML is untrusted and is not executed by the UI. Skills are loaded as text, never executed.
@@ -39,4 +44,4 @@ A success linked explicitly to a matching clue fact version may renew confirmati
 
 Default staleness is 90 days from matching successful confirmation or approval if never confirmed. Daily marking persists a trust-state transition in git. Incident links are references only: Hindsight does not ingest Slack or ticket timelines. The sample's success is clearly fictional, not live evidence.
 
-See [CLUE.md](../CLUE.md) for an annotated clue and `examples/sample-knowledge/` for deterministic UUID examples of all six kinds.
+See the [CLUE.md spec](clue-spec.md) for an annotated clue and [`examples/sample-knowledge/`](https://github.com/DrDroidLab/hindsight/tree/main/examples/sample-knowledge) for deterministic UUID examples of all six kinds.

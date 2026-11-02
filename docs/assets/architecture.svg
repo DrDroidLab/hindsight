@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" role="img" aria-labelledby="t d" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title id="t">Hindsight architecture</title>
+  <desc id="d">Engineers' coding agents call the Hindsight server over MCP to recall knowledge and use hooks to propose clues. The server redacts, indexes in SQLite FTS5 and commits to any git remote. Reviewers approve clues in the review queue.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#5b6b82"/></marker>
+  </defs>
+  <rect width="960" height="470" fill="#ffffff"/>
+
+  <!-- Agents -->
+  <rect x="20" y="40" width="220" height="300" rx="12" fill="#f4f7fc" stroke="#c9d5ea"/>
+  <text x="130" y="68" text-anchor="middle" font-size="15" font-weight="700" fill="#243247">Engineers' laptops</text>
+  <text x="130" y="88" text-anchor="middle" font-size="12" fill="#5b6b82">any MCP client</text>
+  <g font-size="14" fill="#243247" text-anchor="middle">
+    <rect x="45" y="105" width="170" height="40" rx="8" fill="#fff" stroke="#c9d5ea"/><text x="130" y="130">Claude Code</text>
+    <rect x="45" y="157" width="170" height="40" rx="8" fill="#fff" stroke="#c9d5ea"/><text x="130" y="182">Cursor</text>
+    <rect x="45" y="209" width="170" height="40" rx="8" fill="#fff" stroke="#c9d5ea"/><text x="130" y="234">Codex</text>
+    <rect x="45" y="261" width="170" height="40" rx="8" fill="#fff" stroke="#c9d5ea"/><text x="130" y="286">Gemini CLI</text>
+  </g>
+
+  <!-- Server -->
+  <rect x="330" y="40" width="300" height="300" rx="12" fill="#eef3fc" stroke="#245cc2" stroke-width="1.5"/>
+  <text x="480" y="68" text-anchor="middle" font-size="15" font-weight="700" fill="#245cc2">Hindsight server</text>
+  <text x="480" y="88" text-anchor="middle" font-size="12" fill="#5b6b82">one Docker image</text>
+  <g text-anchor="middle">
+    <rect x="355" y="105" width="250" height="56" rx="8" fill="#fff" stroke="#c9d5ea"/>
+    <text x="480" y="129" font-size="14" font-weight="600" fill="#243247">MCP endpoint</text>
+    <text x="480" y="148" font-size="12" fill="#5b6b82">Streamable HTTP + stdio · per-user keys</text>
+    <rect x="355" y="173" width="250" height="56" rx="8" fill="#fff" stroke="#c9d5ea"/>
+    <text x="480" y="197" font-size="14" font-weight="600" fill="#243247">Redact → extract</text>
+    <text x="480" y="216" font-size="12" fill="#5b6b82">nothing raw is stored</text>
+    <rect x="355" y="241" width="250" height="56" rx="8" fill="#fff" stroke="#c9d5ea"/>
+    <text x="480" y="265" font-size="14" font-weight="600" fill="#243247">Search index</text>
+    <text x="480" y="284" font-size="12" fill="#5b6b82">SQLite FTS5, rebuilt from git</text>
+  </g>
+
+  <!-- Git -->
+  <rect x="720" y="130" width="220" height="120" rx="12" fill="#f3f8f4" stroke="#9cc7a9"/>
+  <text x="830" y="172" text-anchor="middle" font-size="15" font-weight="700" fill="#237550">Any git remote</text>
+  <text x="830" y="196" text-anchor="middle" font-size="12" fill="#3f5a48">GitHub · GitLab · Gitea · bare</text>
+  <text x="830" y="216" text-anchor="middle" font-size="12" fill="#3f5a48">Markdown is the source of truth</text>
+
+  <!-- Review -->
+  <rect x="355" y="385" width="250" height="60" rx="10" fill="#fff8e6" stroke="#e3c46d"/>
+  <text x="480" y="410" text-anchor="middle" font-size="14" font-weight="700" fill="#7a5a00">Review queue UI</text>
+  <text x="480" y="429" text-anchor="middle" font-size="12" fill="#7a5a00">approve · reject · promote to runbook</text>
+
+  <!-- Arrows -->
+  <g stroke="#5b6b82" stroke-width="1.6" fill="none">
+    <path d="M240 140 H350" marker-end="url(#a)"/>
+    <path d="M240 210 H350" marker-end="url(#a)"/>
+    <path d="M630 190 H715" marker-end="url(#a)" marker-start="url(#a)"/>
+    <path d="M480 345 V380" marker-end="url(#a)" marker-start="url(#a)"/>
+  </g>
+  <g font-size="11.5" fill="#5b6b82">
+    <text x="252" y="132">recall, load_skill</text>
+    <text x="252" y="202">propose_clue</text>
+    <text x="252" y="228">report_outcome</text>
+    <text x="640" y="180">commit on write</text>
+    <text x="640" y="212">push on a timer</text>
+    <text x="492" y="368">reviewers</text>
+  </g>
+</svg>

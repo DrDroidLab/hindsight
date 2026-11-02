@@ -43,4 +43,4 @@ The server computes fingerprints from scope, service IDs, alerts, and normalized
 
 `source` contains only a bounded redacted excerpt, opaque agent/session identifiers, and optionally a validated safe link. Never store local transcript paths, raw transcripts, environment dumps, credentials, or API keys here. Confidence is a number from 0 to 1, not approval or a probability guarantee.
 
-Storage path: `clues/<date>-<slug>-<short-id>.md` or `teams/<team>/clues/<name>.md`. Server-created filenames may use UUIDs. Scope comes from the validated path, not frontmatter. The stable UUID is the identity even if a file is renamed. See [all content types](docs/content-model.md) and the seven [sample records](examples/sample-knowledge/).
+Storage path: `clues/<date>-<slug>-<short-id>.md` or `teams/<team>/clues/<name>.md`. Server-created filenames may use UUIDs. Scope comes from the validated path, not frontmatter. The stable UUID is the identity even if a file is renamed. See [all content types](https://drdroidlab.github.io/hindsight/content-model/) and the seven [sample records](https://github.com/DrDroidLab/hindsight/tree/main/examples/sample-knowledge).

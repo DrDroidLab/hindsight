@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block htmltitle %}
+  {% if page.meta and page.meta.seo_title %}
+    <title>{{ page.meta.seo_title }}</title>
+  {% else %}
+    {{ super() }}
+  {% endif %}
+{% endblock %}
+
+{% block extrahead %}
+  {% set title = (page.meta.seo_title if page.meta and page.meta.seo_title else (page.title ~ " - " ~ config.site_name)) %}
+  {% set description = (page.meta.description if page.meta and page.meta.description else config.site_description) %}
+  {% set image = config.site_url ~ config.extra.og_image %}
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#245cc2">
+  <meta property="og:type" content="{{ 'website' if page.is_homepage else 'article' }}">
+  <meta property="og:site_name" content="{{ config.site_name }}">
+  <meta property="og:title" content="{{ title | e }}">
+  <meta property="og:description" content="{{ description | striptags | trim | e }}">
+  <meta property="og:url" content="{{ page.canonical_url }}">
+  <meta property="og:image" content="{{ image }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Hindsight review queue showing a proposed clue with redacted evidence">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ title | e }}">
+  <meta name="twitter:description" content="{{ description | striptags | trim | e }}">
+  <meta name="twitter:image" content="{{ image }}">
+  {% if page.is_homepage %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Hindsight",
+    "alternateName": "hindsight-sre",
+    "applicationCategory": "DeveloperApplication",
+    "applicationSubCategory": "Site reliability engineering",
+    "operatingSystem": "Linux, macOS, Windows (Docker)",
+    "description": {{ description | striptags | trim | tojson }},
+    "url": "{{ config.site_url }}",
+    "image": "{{ image }}",
+    "screenshot": "{{ config.site_url }}assets/screenshots/review-queue.png",
+    "license": "https://opensource.org/licenses/MIT",
+    "isAccessibleForFree": true,
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "codeRepository": "{{ config.repo_url }}",
+    "programmingLanguage": ["Python", "TypeScript"],
+    "keywords": "operational memory, coding agents, MCP server, SRE, runbooks, incident learnings, postmortem, Claude Code, Cursor, Codex, Gemini CLI, self-hosted"
+  }
+  </script>
+  {% endif %}
+  {% if page.meta and page.meta.faq %}
+  {% set entities = [] %}
+  {% for item in page.meta.faq %}
+    {% set _ = entities.append({"@type": "Question", "name": item.q, "acceptedAnswer": {"@type": "Answer", "text": item.a}}) %}
+  {% endfor %}
+  <script type="application/ld+json">{{ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": entities} | tojson }}</script>
+  {% endif %}
+{% endblock %}
+
+{# FAQ entries live once, in front matter, and render as both page content and FAQPage data. #}
+{% block content %}
+  {{ super() }}
+  {% if page.meta and page.meta.faq %}
+    {% for item in page.meta.faq %}
+      <h3 id="faq-{{ loop.index }}">{{ item.q }}</h3>
+      <p>{{ item.a }}</p>
+    {% endfor %}
+  {% endif %}
+{% endblock %}

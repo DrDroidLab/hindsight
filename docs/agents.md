@@ -1,3 +1,9 @@
+---
+seo_title: "Connect Claude Code, Cursor, Codex and Gemini CLI to Hindsight over MCP"
+description: >-
+  Install Hindsight's MCP server, retrieval skill and capture hooks into Claude Code, Cursor, Codex and Gemini CLI, with per-client hook support and limits.
+---
+
 # Agent integrations and capability truthfulness
 
 Hindsight supplies memory to an existing agent. It never replaces that agent's runtime or assumes its authority. Installers use the noncolliding **hindsight-sre** MCP name, private user-level credentials, owned configuration entries, collision refusal, dry-run/check/uninstall, and isolated backups. Do not use project-tracked secrets or paste keys into shell commands.

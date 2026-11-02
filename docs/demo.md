@@ -1,3 +1,8 @@
+---
+description: >-
+  Run Hindsight's offline Docker demo with a seeded sample repo, walk through review, approval and runbook promotion, and capture reproducible screenshots.
+---
+
 # Reproducible offline demo and screenshot recipe
 
 ## Prerequisites and safety

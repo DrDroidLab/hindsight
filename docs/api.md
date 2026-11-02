@@ -1,3 +1,8 @@
+---
+description: >-
+  Reference for Hindsight's HTTP review API and its seven MCP tools: recall, get_runbook, list_skills, load_skill, propose_clue, report_outcome and whoami.
+---
+
 # HTTP and MCP reference
 
 All API responses are same-origin JSON. Private endpoints require a Bearer key or the HttpOnly browser session. Cookie-authenticated mutations additionally require `X-CSRF-Token`; exchange keys through `POST /api/session`, not a URL. Do not enable wildcard CORS. Errors expose sanitized `{detail: string}` and appropriate 400/401/403/404/409/413 status (503 may indicate an unavailable dependency). Inaccessible IDs use not-found behavior.
