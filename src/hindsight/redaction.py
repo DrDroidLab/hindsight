@@ -11,6 +11,13 @@ import yaml
 
 from .models import KnowledgeError
 
+INJECTED_CONTEXT = regex.compile(r"<system-reminder>.*?(?:</system-reminder>|\Z)", regex.S)
+
+
+def strip_injected_context(text):
+    """Drop context an agent harness injects into user turns; it is not session evidence."""
+    return INJECTED_CONTEXT.sub("", text).strip() if isinstance(text, str) else text
+
 
 class Redactor:
     VERSION = "1"

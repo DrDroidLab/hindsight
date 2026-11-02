@@ -10,7 +10,7 @@ from pathlib import Path
 
 import httpx
 
-from hindsight.redaction import Redactor
+from hindsight.redaction import Redactor, strip_injected_context
 
 from .installers import AGENTS, validate_server
 from .storage import home_path, private_dir, read_json, read_text, safe_path, write_json
@@ -81,12 +81,17 @@ def _messages(agent, event, home):
             message = record.get("payload", {})
             if message.get("type") != "message":
                 continue
+        elif agent == "claude":
+            # Only conversation turns: skip API request copies and harness meta messages.
+            if record.get("type") not in ("user", "assistant") or record.get("isMeta"):
+                continue
+            message = record.get("message", {})
         else:
             message = record.get("message", record)
         role = message.get("role", message.get("type", record.get("role")))
         if role not in ("user", "assistant", "gemini"):
             continue
-        text = _text(message.get("content", ""))
+        text = strip_injected_context(_text(message.get("content", "")))
         if (
             "[Tool call]" in text
             or "[Tool result]" in text
@@ -184,6 +189,8 @@ def capture_hook(agent, event, home=None):
             "scope": credentials.get("scope", "shared"),
             "summary": "Captured agent evidence; requires human review.",
             "excerpt": excerpt,
+            # The summary is a placeholder, so duplicates are judged on the evidence.
+            "evidence_only": True,
         }
         # Spool and checkpoint BEFORE network I/O: a client-enforced kill still leaves
         # a redacted retry receipt, never a raw transcript copy.

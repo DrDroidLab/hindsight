@@ -524,3 +524,50 @@ def test_git_review_capture_visible_but_ui_mutations_blocked(system):
     assert knowledge.repo.sync_state["status"] == "synced"
     incident = knowledge.incident(user, {"title": "Git reviewed incident", "scope": "shared"})
     assert incident["kind"] == "incident"
+
+
+def test_transcript_drafts_dedupe_on_evidence_and_drop_injected_context(system):
+    knowledge, user, _, _, _, _ = system
+
+    def draft(cid, excerpt):
+        return knowledge.capture(
+            user,
+            {
+                "capture_id": cid,
+                "scope": "shared",
+                "summary": "Captured agent evidence; requires human review.",
+                "excerpt": excerpt,
+                "evidence_only": True,
+                "agent": "claude",
+                "session_id": cid,
+            },
+        )
+
+    first = draft("session-a", "user: Redis evicted keys under memory pressure.")
+    second = draft("session-b", "user: The queue worker lost its lease after a deploy.")
+    assert first["extraction_state"] != "duplicate"
+    assert second["clue_ids"] != first["clue_ids"]
+    again = draft("session-c", "user: Redis evicted keys under memory pressure.")
+    assert again["extraction_state"] == "duplicate" and again["clue_ids"] == first["clue_ids"]
+
+    injected = draft(
+        "session-d",
+        "user: <system-reminder>\n# userEmail\nWorkspace context.\n</system-reminder>\n"
+        "Check the pool size before scaling.",
+    )
+    clue = knowledge.get(user, injected["clue_ids"][0], "clue")
+    excerpt = clue.meta["source"]["excerpt"]
+    assert "system-reminder" not in excerpt and "Workspace context" not in excerpt
+    assert "Check the pool size" in excerpt
+    # Facts proposed explicitly still dedupe on the fact, whatever the evidence.
+    fact = capture(knowledge, user, summary="Restart only the sidecar", cid="fact-1")
+    same = knowledge.capture(
+        user,
+        {
+            "capture_id": "fact-2",
+            "scope": "shared",
+            "summary": "Restart only the sidecar",
+            "excerpt": "different evidence",
+        },
+    )
+    assert same["clue_ids"] == [fact.id]

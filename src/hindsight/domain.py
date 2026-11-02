@@ -10,6 +10,7 @@ from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 from .models import Identity, KnowledgeError, Record, dump_document, parse_document
+from .redaction import strip_injected_context
 
 
 def now_iso() -> str:
@@ -192,6 +193,8 @@ class Knowledge:
 
     def capture(self, identity, payload, *, extraction_complete=False, parent_clue_id=None):
         payload = self.redactor.clean(payload)
+        for field in ("summary", "excerpt"):
+            payload[field] = strip_injected_context(payload.get(field, ""))
         scope = payload.get("scope", "shared")
         self._scope(identity, scope)
         summary = payload.get("summary", "")
@@ -210,7 +213,12 @@ class Knowledge:
         if not isinstance(services, list) or not isinstance(alerts, list) or len(alerts) > 50:
             raise KnowledgeError("Invalid service or alert references")
         self._references(identity, scope, services, payload.get("incident_id"))
-        fp = fingerprint(scope, services, alerts, summary)
+        # A transcript draft has no fact yet; fingerprint its evidence so distinct
+        # sessions are not collapsed into the first draft.
+        fact = summary
+        if payload.get("evidence_only") and not candidate:
+            fact = summary + "\n" + str(payload.get("excerpt", ""))
+        fp = fingerprint(scope, services, alerts, fact)
         with self.repo.lock():
             for existing in self.records(identity, "clue"):
                 if existing.scope == scope and (

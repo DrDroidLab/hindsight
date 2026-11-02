@@ -196,7 +196,10 @@ def test_checkpoint_incremental_and_final_response_flush(home, monkeypatch):
     root = home / ".claude/projects"
     root.mkdir(parents=True)
     path = root / "session.jsonl"
-    path.write_text(json.dumps({"message": {"role": "assistant", "content": "first fact"}}) + "\n")
+    path.write_text(
+        json.dumps({"type": "assistant", "message": {"role": "assistant", "content": "first fact"}})
+        + "\n"
+    )
     submissions = []
     monkeypatch.setattr(
         capture, "_send", lambda payload, credentials: submissions.append(payload) or True
@@ -209,11 +212,19 @@ def test_checkpoint_incremental_and_final_response_flush(home, monkeypatch):
     assert capture_hook("claude", event, home)["status"] == "submitted"
     with path.open("a") as stream:
         stream.write(
-            json.dumps({"message": {"role": "assistant", "content": "second fact"}}) + "\n"
+            json.dumps(
+                {"type": "assistant", "message": {"role": "assistant", "content": "second fact"}}
+            )
+            + "\n"
         )
     assert capture_hook("claude", event, home)["status"] == "duplicate-or-empty"
     with path.open("a") as stream:
-        stream.write(json.dumps({"message": {"role": "assistant", "content": "third fact"}}) + "\n")
+        stream.write(
+            json.dumps(
+                {"type": "assistant", "message": {"role": "assistant", "content": "third fact"}}
+            )
+            + "\n"
+        )
     event.pop("last_assistant_message")
     assert capture_hook("claude", event, home)["status"] == "submitted"
     assert len(submissions) == 2
@@ -363,3 +374,46 @@ def test_cursor_nested_jsonl_and_tool_payload_filter(home, monkeypatch):
     )
     assert "Safe fact" in sent[0]["excerpt"]
     assert "DO_NOT_CAPTURE" not in sent[0]["excerpt"]
+
+
+def test_claude_capture_skips_request_copies_and_injected_context(home, monkeypatch):
+    root = home / ".claude/projects"
+    root.mkdir(parents=True)
+    path = root / "session.jsonl"
+    reminder = "<system-reminder>\n# userEmail\nWorkspace context.\n</system-reminder>"
+    records = [
+        {
+            "type": "user",
+            "message": {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": reminder},
+                    {"type": "text", "text": "Why is p99 high?"},
+                ],
+            },
+        },
+        {
+            "type": "api-request-blob",
+            "message": {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": reminder},
+                    {"type": "text", "text": "Why is p99 high?"},
+                ],
+            },
+        },
+        {"type": "user", "isMeta": True, "message": {"role": "user", "content": "meta note"}},
+        {"type": "assistant", "message": {"role": "assistant", "content": "Pool exhausted."}},
+    ]
+    path.write_text("\n".join(json.dumps(r) for r in records) + "\n")
+    submitted = []
+    monkeypatch.setattr(
+        capture, "_send", lambda payload, credentials: submitted.append(payload) or True
+    )
+    event = {"session_id": "s", "transcript_path": str(path)}
+    assert capture_hook("claude", event, home)["status"] == "submitted"
+    excerpt = submitted[0]["excerpt"]
+    assert "Workspace context" not in excerpt and "system-reminder" not in excerpt
+    assert "meta note" not in excerpt
+    assert excerpt.count("Why is p99 high?") == 1 and "Pool exhausted." in excerpt
+    assert submitted[0]["evidence_only"] is True
