@@ -78,13 +78,13 @@ Capture, review and full-text recall work with no LLM key. Optional extraction a
 ## Try it locally
 
 ```sh
-git clone https://github.com/DrDroidLab/hindsight.git
-cd hindsight
-docker compose -f compose.yaml -f compose.demo.yaml up --build -d
+mkdir hindsight && cd hindsight
+curl -fsSLO https://raw.githubusercontent.com/DrDroidLab/hindsight/main/compose.yaml -O https://raw.githubusercontent.com/DrDroidLab/hindsight/main/compose.demo.yaml
+docker compose -f compose.yaml -f compose.demo.yaml up -d
 docker compose exec hindsight hindsight admin bootstrap
 ```
 
-Open `http://localhost:8080/setup`, paste the enrollment token, and review the seeded sample clue. The demo needs no git credentials, no model provider and no network once the image is built. See the [quickstart](getting-started.md) for connecting your agent.
+Open `http://localhost:8080/setup`, paste the enrollment token, and review the seeded sample clue. The demo needs no git credentials, no model provider and no network once the image is pulled. See the [quickstart](getting-started.md) for connecting your agent.
 
 ## What Hindsight is not
 
