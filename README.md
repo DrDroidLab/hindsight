@@ -1,19 +1,47 @@
-# Hindsight
+<p align="center">
+  <img src="docs/assets/logo.svg" width="64" height="64" alt="Hindsight logo">
+</p>
 
-**Operational memory underneath your engineer's agent. Review what it learned before your team relies on it.**
+<h1 align="center">Hindsight</h1>
 
-Hindsight turns redacted session learnings into a **review queue**, not another agent dashboard. Inspect evidence, edit a clue without an LLM, approve or reject it, then separately preview and accept a runbook change. Typed services, runbooks, clues, skills, incidents, and outcomes live in human-readable Markdown in git.
+<p align="center">
+  <strong>Self-hosted operational memory for your team's coding agents.</strong><br>
+  Runbooks, service context and reviewed incident learnings, stored in git and served over MCP to Claude Code, Cursor, Codex and Gemini CLI.
+</p>
 
-- **Your agent stays in charge.** Recall context through MCP in Claude Code, Cursor, Codex, Gemini CLI, or another MCP client. Hindsight is not an AI SRE runtime and does not execute production commands. OpenSRE and other investigation agents are complementary.
-- **No telemetry. No required model.** Manual capture, review, and FTS retrieval work offline against a local knowledge repository. Optional extraction and embeddings use your explicitly configured own-key or local OpenAI-compatible endpoint.
-- **Trust is explicit.** Proposed means unreviewed. Stale means re-check the evidence. A reported success does not approve a clue, and approval does not silently edit a runbook.
-- **Git is knowledge, not authentication.** Each human write preserves verified author attribution. Private identities, key digests, sessions, and pepper need their own protected backup.
+<p align="center">
+  <a href="https://github.com/DrDroidLab/hindsight/actions/workflows/ci.yml"><img src="https://github.com/DrDroidLab/hindsight/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license"></a>
+  <a href="https://drdroidlab.github.io/hindsight/"><img src="https://img.shields.io/badge/docs-drdroidlab.github.io%2Fhindsight-245cc2.svg" alt="Documentation"></a>
+  <img src="https://img.shields.io/badge/telemetry-none-brightgreen.svg" alt="No telemetry">
+</p>
 
-> This MIT-licensed **hindsight-sre** package is not the Vectorize project named Hindsight. There is no managed service or hidden hosted fallback. Redaction is best effort, not a guarantee that every secret will be found. Start with a sanitized remote: existing git objects/history are outside the no-new-raw-store guarantee.
+<p align="center">
+  <a href="https://drdroidlab.github.io/hindsight/">Documentation</a> ·
+  <a href="https://drdroidlab.github.io/hindsight/getting-started/">Quickstart</a> ·
+  <a href="https://drdroidlab.github.io/hindsight/how-it-works/">How it works</a> ·
+  <a href="CLUE.md">CLUE.md spec</a> ·
+  <a href="https://drdroidlab.github.io/hindsight/faq/">FAQ</a>
+</p>
 
-## Try the reviewed queue
+![Hindsight review queue showing three proposed clues from last night's on-call; the selected clue's session excerpt has a token and an IP address replaced by REDACTED markers](docs/assets/screenshots/review-queue.png)
 
-Prerequisites: Docker with Compose v2, git, a browser, and an available loopback port 8080. The first image build requires network access for dependencies; the running demo has no remote git or model dependency.
+## Why Hindsight
+
+Your coding agent forgets every incident. The engineer who learned that `CrashLoopBackOff` on `payments-api` after a credential rotation means a stale secret mount took that lesson home; the next person's agent starts from zero.
+
+Hindsight keeps that knowledge without becoming another agent you have to run:
+
+- **Captures** learnings from agent sessions through lifecycle hooks, or explicitly through the CLI and MCP.
+- **Redacts** tokens, keys, IPs, emails and customer IDs before anything is written. There is no raw transcript store.
+- **Reviews** every learning in a queue. Proposed clues stay labelled *unreviewed* until a human approves them, and promoting a clue into a runbook is a separate, diffed commit.
+- **Serves** approved runbooks, services and clues to whichever agent each engineer already uses, over MCP.
+
+Everything is typed Markdown in a git remote you control, every commit carries the real engineer as author, and nothing leaves your infrastructure.
+
+## Quickstart
+
+Requires Docker with Compose v2 and git. The demo runs offline with a seeded sample repo, no model provider and no git credentials.
 
 ```sh
 git clone https://github.com/DrDroidLab/hindsight.git
@@ -22,75 +50,64 @@ docker compose -f compose.yaml -f compose.demo.yaml up --build -d
 docker compose exec hindsight hindsight admin bootstrap
 ```
 
-Open **http://localhost:8080/setup**. Paste the single-use enrollment token from your terminal, choose your real human name/email and team, and save the personal key shown once in a password manager. Sign in with that key. Never put a key in a URL, shell history, or project config.
+Open <http://localhost:8080/setup>, paste the enrollment token, save the API key shown once, and sign in. Then approve the proposed clue and promote it to the CrashLoopBackOff runbook. If port 8080 is busy, set `HINDSIGHT_PORT` before `up`.
 
-The demo initializes a local bare remote at `/data/demo-remote.git` from `examples/sample-knowledge/`. It contains seven fictional shared-scope documents: payments-api, a CrashLoopBackOff runbook, an approved clue, an unreviewed clue, a skill, a resolved incident, and a successful illustrative outcome. No production connection exists. Re-running does not overwrite an existing remote.
-
-1. Select **Verify a stale mount before restarting** in Proposed.
-2. Inspect the explicitly redacted evidence, edit the learned fact, and save.
-3. Approve it. This creates a new trust commit, not a runbook edit.
-4. On the approved clue, choose **Promote to runbook**, select CrashLoopBackOff, enter a new stable step ID, preview the actual diff, verify it, then commit the separate promotion.
-5. Check Git sync status. Local committed changes remain usable during an upstream outage.
-
-The happy path is a roughly two-minute review once prerequisites and the image are ready, not a promise about downloads, machine provisioning, agent/model response time, or automatic hook delivery. See [the reproducible demo and screenshot recipe](docs/demo.md).
-
-## Connect one agent
-
-Install the Python 3.12+ client in an isolated environment (git must also be installed), then use its interactive key prompt:
+### Connect your agent
 
 ```sh
-python3.12 -m venv .venv
-. .venv/bin/activate
+python3.12 -m venv .venv && . .venv/bin/activate
 pip install .
 hindsight login --server http://localhost:8080 --scope shared
-hindsight install claude --server http://localhost:8080 --dry-run
-hindsight install claude --server http://localhost:8080
-hindsight install claude --check
+hindsight install claude --server http://localhost:8080   # or cursor, codex, gemini
 ```
 
-Restart/trust the client as prompted, then ask: **“Recall what we know about payments-api CrashLoopBackOff after credential rotation. Distinguish approved knowledge from unreviewed clues.”** Replace `claude` with `cursor`, `codex`, or `gemini`. Installers preserve unrelated settings and use the distinct `hindsight-sre` MCP alias. Lifecycle capture depends on client version, hook trust, transcript access, and hook time budgets; see [agent capabilities and verification limits](docs/agents.md). Explicit capture always has a CLI fallback:
+Restart the agent and ask: *"Recall what we know about payments-api CrashLoopBackOff after credential rotation."* The full walkthrough, including deploying against your own git remote, is in the [quickstart guide](https://drdroidlab.github.io/hindsight/getting-started/).
 
-```sh
-hindsight capture --scope shared --summary 'A fictional mount lagged after simulated credential rotation.'
-hindsight recall 'CrashLoopBackOff' --scope shared
-hindsight review --status proposed
-```
+## Features
 
-Do not put sensitive production content in command arguments. Prefer the capture stdin form for operational content; review it locally first. See `hindsight capture --help`.
+| | |
+| --- | --- |
+| **Typed SRE knowledge** | Services, runbooks with stable step IDs, clues, skills, incidents and outcomes, cross-linked by service and alert ([content model](https://drdroidlab.github.io/hindsight/content-model/)) |
+| **Seven MCP tools** | `recall`, `get_runbook`, `list_skills`, `load_skill`, `propose_clue`, `report_outcome`, `whoami` over Streamable HTTP or stdio ([API](https://drdroidlab.github.io/hindsight/api/)) |
+| **Review queue** | Approve, reject, edit and promote to runbook, with revision conflict detection; or review as git pull requests with `REVIEW_MODE=git` |
+| **Trust states** | Proposed, approved, stale and rejected clues are labelled in every recall; clues go stale without a confirming outcome |
+| **Any git remote** | GitHub, GitLab, Gitea or a bare repo; local clone, commit on write, push on a timer, works offline |
+| **Search** | SQLite FTS5 rebuilt from git; optional embeddings from your own endpoint |
+| **Per-user keys and team scopes** | Every commit is attributed to a verified engineer; scopes filter results before counts and snippets |
+| **No model required** | Capture, review and recall work without an LLM; optional extraction uses your own key or a local model |
 
-## Deploy with your knowledge remote
+## What Hindsight is not
 
-```sh
-cp .env.example .env
-# Set GIT_REMOTE to a dedicated sanitized repository. Configure git credentials privately.
-docker compose up --build -d
-docker compose exec hindsight hindsight admin bootstrap
-```
+Hindsight is not an AI SRE agent. It never gets paged, runs commands against production, or hosts your data, and it sends no telemetry. It is the knowledge layer underneath the agent each engineer already uses. If you want an agent that investigates incidents for you, see projects like OpenSRE; they are complementary, and such an agent could be a Hindsight client. See the [comparison](https://drdroidlab.github.io/hindsight/comparison/).
 
-`GIT_REMOTE` is the only required normal-mode knowledge setting. Public clone access does **not** grant push permission. The default port is loopback-only; use an operator-managed HTTPS proxy before remote access and set exact `ALLOWED_HOSTS`/`ALLOWED_ORIGINS` and `PUBLIC_ORIGIN=https://your-host`. Run one application worker and one writer per data volume. Knowledge team scopes are application isolation, not git-history encryption.
+> This MIT-licensed project is published as **`hindsight-sre`** and is unrelated to the Vectorize project also named Hindsight.
 
-Read [operations, backup, offline sync, and conflict recovery](docs/operations.md) and [the security model](docs/security.md) before deployment. Do not expose the demo as a public unauthenticated service. `/health` reports process availability and `/ready` reports initialized repository/index readiness; offline git outages do not inherently invalidate a usable clone.
+## Security
 
-## Interfaces and limits
+Redaction runs in the agent hook and again on the server, but it is best effort: no detector finds every secret, so reviewers should read the evidence before approving. Start from a dedicated, sanitized knowledge remote, keep the server behind HTTPS, and back up the private auth state separately from git. Read the [security model](https://drdroidlab.github.io/hindsight/security/) and [operations guide](https://drdroidlab.github.io/hindsight/operations/), and report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
 
-- HTTP review API and same-origin bundled TypeScript UI; cookie login plus CSRF for browser writes.
-- Official Python MCP SDK: authenticated Streamable HTTP at `/mcp`; local stdio and a credential-reading stdio-to-HTTP proxy.
-- MCP tools: `recall`, `get_runbook`, `list_skills`, `load_skill`, `propose_clue`, `report_outcome`, `whoami`.
-- Incident lifecycle and explicit runbook outcome reporting, not Slack/PagerDuty ingestion, ticket synchronization, or guessed fix success.
-- SQLite FTS5 is rebuildable; private auth is not. Optional bounded in-process semantic scoring is not a separate vector database.
-- New steps can be promoted to an existing runbook. The API also supports creating a runbook; the queue currently selects an existing target. Arbitrary runbook editing is not a general-purpose CMS feature.
-- Offline agent contract tests are not certification of proprietary client UIs. Live clients and provider credentials are opt-in and unverified unless a documented matrix run says otherwise.
+## Project status
 
-## Develop and verify
+Early-stage, v0.1. The automated suite (Python, frontend, and an offline Docker smoke test) passes in CI. Live agent clients and live LLM providers have not yet been certified; per-client hook support and limits are documented in [Connect your agent](https://drdroidlab.github.io/hindsight/agents/), and the [verification record](https://drdroidlab.github.io/hindsight/verification/) lists exactly what has and has not been checked.
+
+## Development
 
 ```sh
 pip install -e '.[dev]'
-npm ci --prefix web
-npm run build --prefix web
-npm test --prefix web
-pytest
-ruff check src tests scripts
-mypy src/hindsight
+npm ci --prefix web && npm run build --prefix web
+pytest && npm test --prefix web
+ruff check src tests scripts && mypy src/hindsight
 ```
 
-Frontend builds into `src/hindsight/static/`; production needs no Node server or external assets. Do not run multiple writers on one data directory. See [CONTRIBUTING.md](CONTRIBUTING.md), [CLUE.md](CLUE.md), [content schemas](docs/content-model.md), and [API reference](docs/api.md). CI builds the image and runs the offline demo smoke in addition to Python and frontend checks. Test results, not this README, are the authority for a particular revision.
+To work on the documentation site:
+
+```sh
+pip install -e '.[docs]'
+mkdocs serve
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Good first contributions: a capture hook for another agent, or a new redaction rule.
+
+## License
+
+[MIT](LICENSE)

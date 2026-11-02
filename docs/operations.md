@@ -1,3 +1,8 @@
+---
+description: >-
+  Run Hindsight in production: storage layout, configuration, health checks, users and API keys, git sync and conflicts, backup, restore and upgrades.
+---
+
 # Operations
 
 ## Storage and process model

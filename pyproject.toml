@@ -5,10 +5,19 @@ build-backend = "hatchling.build"
 [project]
 name = "hindsight-sre"
 version = "0.1.0"
-description = "Git-backed operational memory for your team's coding agents"
+description = "Self-hosted, git-backed operational memory for coding agents: reviewed runbooks and incident learnings over MCP"
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
+keywords = ["mcp", "sre", "runbooks", "incident-response", "coding-agents", "claude-code", "cursor", "operational-memory", "postmortem"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: System Administrators",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: System :: Systems Administration",
+  "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
 dependencies = [
   "fastapi>=0.115,<1", "uvicorn>=0.32,<1", "mcp==1.30.0",
   "PyYAML>=6,<7", "regex>=2024.11", "filelock>=3.16",
@@ -16,7 +25,14 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+docs = ["mkdocs-material>=9.5,<10"]
 dev = ["pytest>=8,<10", "pytest-asyncio>=0.24,<2", "ruff>=0.9", "mypy>=1.13", "types-PyYAML", "build>=1"]
+
+[project.urls]
+Homepage = "https://drdroidlab.github.io/hindsight/"
+Documentation = "https://drdroidlab.github.io/hindsight/"
+Repository = "https://github.com/DrDroidLab/hindsight"
+Issues = "https://github.com/DrDroidLab/hindsight/issues"
 
 [project.scripts]
 hindsight = "hindsight.cli:main"

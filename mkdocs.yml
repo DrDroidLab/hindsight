@@ -1,0 +1,98 @@
+site_name: Hindsight
+site_url: https://drdroidlab.github.io/hindsight/
+site_description: >-
+  Hindsight is a self-hosted, git-backed operational memory for coding agents.
+  It captures redacted incident learnings from Claude Code, Cursor, Codex and
+  Gemini CLI sessions, puts them through a human review queue, and serves
+  runbooks, services and approved clues back to every agent over MCP.
+site_author: DrDroid
+repo_url: https://github.com/DrDroidLab/hindsight
+repo_name: DrDroidLab/hindsight
+edit_uri: edit/main/docs/
+copyright: MIT licensed · No telemetry · Not affiliated with the Vectorize project of the same name
+
+theme:
+  name: material
+  custom_dir: overrides
+  language: en
+  # System fonts: no Google Fonts request, faster first paint.
+  font: false
+  logo: assets/logo.svg
+  favicon: assets/favicon.svg
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.instant
+    - navigation.tracking
+    - content.code.copy
+    - content.action.edit
+    - search.suggest
+    - search.highlight
+    - toc.follow
+
+extra_css:
+  - assets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets:
+      check_paths: true
+
+plugins:
+  - search
+
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/DrDroidLab/hindsight
+      name: Hindsight on GitHub
+  og_image: assets/og-image.png
+
+nav:
+  - Home: index.md
+  - Get started:
+      - Quickstart: getting-started.md
+      - Demo walkthrough: demo.md
+      - Connect your agent: agents.md
+  - Concepts:
+      - How it works: how-it-works.md
+      - Content model: content-model.md
+      - CLUE.md spec: clue-spec.md
+  - Operate:
+      - Operations: operations.md
+      - Security model: security.md
+      - HTTP and MCP API: api.md
+  - Project:
+      - Comparison: comparison.md
+      - FAQ: faq.md
+      - Verification record: verification.md

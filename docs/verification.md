@@ -1,3 +1,8 @@
+---
+description: >-
+  What has and has not been verified in Hindsight: automated test results, Docker smoke tests, and the live agent and provider checks still outstanding.
+---
+
 # Verification record
 
 Date: 2 November 2026, IST (UTC+05:30).

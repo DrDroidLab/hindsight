@@ -1,3 +1,8 @@
+---
+description: >-
+  Hindsight's security model: trust boundaries, private auth state, browser and network hardening, redaction before write, git and team isolation, and incident response.
+---
+
 # Security model and deployment
 
 ## Trust boundaries
@@ -50,4 +55,4 @@ API scopes filter before results, counts, snippets, ranking, references, and dif
 4. Sanitize/rewrite affected remote history through your normal reviewed git incident procedure, including clones, derived index, provider caches, spools, proxies, and backups. Hindsight does not automatically rewrite history.
 5. Restore validated knowledge and private auth from a consistent encrypted backup, rebuild the disposable index, and verify read/write scopes and audit attribution.
 
-See [SECURITY.md](../SECURITY.md) for private reporting and [operations](operations.md) for backup/recovery.
+See [SECURITY.md](https://github.com/DrDroidLab/hindsight/blob/main/SECURITY.md) for private reporting and [operations](operations.md) for backup/recovery.
