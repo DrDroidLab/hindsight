@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and setup help
+    url: https://github.com/DrDroidLab/hindsight/discussions/categories/q-a
+    about: Ask how to install, connect an agent or run Hindsight for your team.
+  - name: Report a security vulnerability
+    url: https://github.com/DrDroidLab/hindsight/security/advisories/new
+    about: Report privately. Never post secrets, transcripts or exploit details in a public issue.
