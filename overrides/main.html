@@ -50,6 +50,20 @@
   }
   </script>
   {% endif %}
+  {% if page.is_homepage %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": "Hindsight demo: a Claude Code session with team memory",
+    "description": "A real Claude Code session (Opus 5.5) recalls a team runbook and approved fix from Hindsight over MCP, saves a new fix with the secret redacted, and a teammate approves and promotes it to the runbook.",
+    "thumbnailUrl": "{{ config.site_url }}assets/video/demo-poster.jpg",
+    "contentUrl": "{{ config.site_url }}assets/video/hindsight-demo.mp4",
+    "uploadDate": "2026-11-02",
+    "duration": "PT3M11S"
+  }
+  </script>
+  {% endif %}
   {% if page.meta and page.meta.faq %}
   {% set entities = [] %}
   {% for item in page.meta.faq %}

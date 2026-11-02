@@ -16,6 +16,7 @@
 .hs-hero .hs-lede { font-size: 1.05rem; color: var(--md-default-fg-color--light); margin-bottom: 1.4rem; }
 .hs-hero .md-button { margin: 0.25rem; }
 .hs-shot { border: 1px solid var(--md-default-fg-color--lightest); border-radius: 10px; box-shadow: 0 12px 40px rgba(20, 40, 80, 0.14); display: block; margin: 0 auto; }
+.hs-video { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--md-default-fg-color--lightest); }
 .hs-caption { text-align: center; font-size: 0.75rem; color: var(--md-default-fg-color--light); margin-top: 0.6rem; }
 .hs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; margin: 1.5rem 0; }
 .hs-card { border: 1px solid var(--md-default-fg-color--lightest); border-radius: 8px; padding: 0.9rem 1rem; }

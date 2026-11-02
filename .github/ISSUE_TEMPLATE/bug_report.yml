@@ -1,0 +1,50 @@
+name: Bug report
+description: Something in Hindsight does not work as documented.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use synthetic data only. Do not paste API keys, enrollment tokens, real transcripts, hostnames or customer data.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. docker compose -f compose.yaml -f compose.demo.yaml up -d
+        2. hindsight install claude
+        3. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [Server or review queue, MCP tools, Agent installer or capture hook, Redaction, Git sync, Docs, Other]
+    validations:
+      required: true
+  - type: input
+    id: agent
+    attributes:
+      label: Agent and version
+      placeholder: e.g. Claude Code 2.1.316, Cursor 2.3, none
+  - type: input
+    id: version
+    attributes:
+      label: Hindsight version or commit
+      placeholder: e.g. 0.1.0 or a commit SHA
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or output
+      description: Redact anything sensitive before pasting.
+      render: shell

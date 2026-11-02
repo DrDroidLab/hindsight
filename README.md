@@ -24,6 +24,8 @@
   <a href="https://drdroidlab.github.io/hindsight/faq/">FAQ</a>
 </p>
 
+[![Watch the 3-minute demo: a real Claude Code session (Opus 5.5) using Hindsight](docs/assets/video/demo-poster.jpg)](https://drdroidlab.github.io/hindsight/#demo)
+
 ![Hindsight review queue showing three proposed clues from last night's on-call; the selected clue's session excerpt has a token and an IP address replaced by REDACTED markers](docs/assets/screenshots/review-queue.png)
 
 ## Why Hindsight

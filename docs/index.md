@@ -26,6 +26,15 @@ hide:
 <figcaption class="hs-caption">The review queue: three clues proposed from last night's on-call. Secrets in the evidence were redacted before anything touched git.</figcaption>
 </figure>
 
+## See it in action { #demo }
+
+<video controls preload="none" playsinline width="1280" height="720" poster="assets/video/demo-poster.jpg" class="hs-video">
+  <source src="assets/video/hindsight-demo.mp4" type="video/mp4">
+  <a href="assets/video/hindsight-demo.mp4">Download the 3-minute demo video</a>
+</video>
+
+A real Claude Code session running Opus 5.5 against a local Hindsight server: the agent recalls the team's runbook and an approved fix, saves a new fix with the secret redacted, a teammate approves and promotes it, and the next engineer's agent has it on the first question. Long model pauses are shortened.
+
 ## Give your coding agent the on-call experience your team already paid for
 
 Every incident teaches someone something: which dashboard lies, which alert means the credential mount is stale, which step in the runbook actually fixed it. Today that knowledge dies in a chat transcript. Hindsight keeps it, without turning into another agent you have to run.
