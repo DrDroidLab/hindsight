@@ -80,6 +80,10 @@ def test_redaction_and_idempotence():
         assert raw not in clean
     assert clean.count("[REDACTED:customer-id]") == 5
     assert redactor.redact(clean) == clean
+    ips = "Paged from 10.20.3.14. Then 2001:db8::1. Build 1.2.3.4.5 stays."
+    clean = redactor.redact(ips)
+    assert "10.20.3.14" not in clean and "2001:db8::1" not in clean
+    assert "[REDACTED:ip]. Then" in clean and "1.2.3.4.5" in clean
     prose = "Customer service escalated; the tenant migration is done."
     assert redactor.redact(prose) == prose
     identifier = str(uuid.uuid4())
