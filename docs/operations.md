@@ -81,4 +81,4 @@ There are no built-in hosting-provider PR creation/merge APIs or provider tokens
 
 ## Updating
 
-Back up first, stop the old writer, build a new image, and restart with the same persistent volume. Do not run old and new writers against it concurrently. Check release schema notes and test restore; no automatic cross-version migration guarantee is promised. Keep client hooks and provider settings independently versioned and verify `install --check` after client upgrades.
+Back up first, stop the old writer, pull the new image (`docker compose pull`, or set `HINDSIGHT_IMAGE` to the new version), and restart with the same persistent volume. Do not run old and new writers against it concurrently. Check release schema notes and test restore; no automatic cross-version migration guarantee is promised. Keep client hooks and provider settings independently versioned and verify `install --check` after client upgrades.

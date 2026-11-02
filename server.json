@@ -1,0 +1,50 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.DrDroidLab/hindsight-sre",
+  "title": "Hindsight SRE",
+  "description": "Self-hosted, git-backed runbooks and reviewed incident learnings for coding agents.",
+  "version": "0.1.0",
+  "websiteUrl": "https://drdroidlab.github.io/hindsight/",
+  "repository": {
+    "url": "https://github.com/DrDroidLab/hindsight",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "hindsight-sre",
+      "version": "0.1.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [
+        {
+          "type": "positional",
+          "value": "mcp-proxy"
+        }
+      ],
+      "environmentVariables": [
+        {
+          "name": "HINDSIGHT_SERVER",
+          "description": "URL of your team's Hindsight server. Defaults to the server saved by `hindsight login`.",
+          "format": "string",
+          "placeholder": "https://hindsight.example.com"
+        },
+        {
+          "name": "HINDSIGHT_API_KEY",
+          "description": "Personal API key. Defaults to the private credential file written by `hindsight login`, which is preferred.",
+          "format": "string",
+          "isSecret": true
+        },
+        {
+          "name": "HINDSIGHT_SCOPE",
+          "description": "Knowledge scope to read and write.",
+          "format": "string",
+          "default": "shared"
+        }
+      ]
+    }
+  ]
+}

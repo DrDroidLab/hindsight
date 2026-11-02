@@ -22,6 +22,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends git openssh-cli
     && mkdir -p /data /opt/hindsight \
     && chown -R hindsight:hindsight /data /opt/hindsight
 COPY --from=python-build /install/ /usr/local/
+LABEL org.opencontainers.image.title="Hindsight SRE" \
+      io.modelcontextprotocol.server.name="io.github.DrDroidLab/hindsight-sre"
 USER 10001:10001
 WORKDIR /opt/hindsight
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 HINDSIGHT_DATA_DIR=/data DATA_DIR=/data

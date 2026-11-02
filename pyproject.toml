@@ -36,6 +36,8 @@ Issues = "https://github.com/DrDroidLab/hindsight/issues"
 
 [project.scripts]
 hindsight = "hindsight.cli:main"
+# Alias matching the package name, so `uvx hindsight-sre mcp-proxy` works (MCP Registry entry).
+hindsight-sre = "hindsight.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/hindsight"]

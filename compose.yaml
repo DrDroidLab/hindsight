@@ -1,6 +1,8 @@
+# Pulls the published image. From a clone, `docker compose up --build` builds this checkout instead;
+# set HINDSIGHT_IMAGE to pin a release, e.g. ghcr.io/drdroidlab/hindsight:0.1.0.
 services:
   hindsight:
-    image: hindsight-sre:local
+    image: ${HINDSIGHT_IMAGE:-ghcr.io/drdroidlab/hindsight:latest}
     build: .
     restart: unless-stopped
     init: true

@@ -1,7 +1,7 @@
 ---
 seo_title: "Quickstart: install Hindsight with Docker and connect your coding agent"
 description: >-
-  Install Hindsight with Docker Compose, run the offline demo, connect Claude
+  Install Hindsight with Docker Compose and the hindsight-sre CLI, run the offline demo, connect Claude
   Code, Cursor, Codex or Gemini CLI over MCP, and deploy against your own git
   remote.
 ---
@@ -12,26 +12,28 @@ This page gets you from nothing to an agent recalling reviewed knowledge. The [d
 
 ## Prerequisites
 
-- Docker with Compose v2
-- git
+- Docker with Compose v2 (team lead, to run the server)
 - A browser
 - A free loopback port. The default is 8080; set `HINDSIGHT_PORT` to use another.
-- Python 3.12+ for the client CLI that connects agents
+- [uv](https://docs.astral.sh/uv/) or [pipx](https://pipx.pypa.io/) for the client CLI that connects agents (each engineer). It needs Python 3.12+, which uv installs for you if it is missing.
 
-The first image build needs network access for dependencies. The running demo needs no remote git, no model provider and no production access.
+Pulling the image needs network access. The running demo needs no remote git, no model provider and no production access.
 
 ## 1. Run the demo server
 
 ```sh
-git clone https://github.com/DrDroidLab/hindsight.git
-cd hindsight
-docker compose -f compose.yaml -f compose.demo.yaml up --build -d
+mkdir hindsight && cd hindsight
+curl -fsSLO https://raw.githubusercontent.com/DrDroidLab/hindsight/main/compose.yaml -O https://raw.githubusercontent.com/DrDroidLab/hindsight/main/compose.demo.yaml
+docker compose -f compose.yaml -f compose.demo.yaml up -d
 docker compose exec hindsight hindsight admin bootstrap
 ```
 
-If port 8080 is taken, prefix the `up` command with `HINDSIGHT_PORT=8091` (or any free port) and use that port below.
+Compose pulls `ghcr.io/drdroidlab/hindsight:latest`. To pin a release, set `HINDSIGHT_IMAGE=ghcr.io/drdroidlab/hindsight:<version>`. If port 8080 is taken, prefix the `up` command with `HINDSIGHT_PORT=8091` (or any free port) and use that port below.
 
-The demo creates a local bare git remote at `/data/demo-remote.git` from `examples/sample-knowledge/`. It holds seven fictional documents: the `payments-api` service, a CrashLoopBackOff runbook, an approved clue, an unreviewed clue, a skill, a resolved incident and an outcome. Running it again does not overwrite an existing remote.
+!!! tip "Running from a clone"
+    In a checkout of the repository, `docker compose -f compose.yaml -f compose.demo.yaml up --build -d` builds the image from your working tree instead of pulling it.
+
+The demo creates a local bare git remote at `/data/demo-remote.git` from the sample knowledge bundled in the image (`examples/sample-knowledge/` in the repository). It holds seven fictional documents: the `payments-api` service, a CrashLoopBackOff runbook, an approved clue, an unreviewed clue, a skill, a resolved incident and an outcome. Running it again does not overwrite an existing remote.
 
 ## 2. Enroll and review
 
@@ -48,12 +50,10 @@ Approval and promotion are two separate git commits, both authored by you.
 
 ## 3. Connect an agent
 
-Install the client CLI in a virtual environment, log in, and install the integration for your agent:
+Each engineer installs the `hindsight-sre` CLI from PyPI, logs in, and installs the integration for their agent:
 
 ```sh
-python3.12 -m venv .venv
-. .venv/bin/activate
-pip install .
+uv tool install hindsight-sre      # or: pipx install hindsight-sre
 hindsight login --server http://localhost:8080 --scope shared
 hindsight install claude --server http://localhost:8080 --dry-run
 hindsight install claude --server http://localhost:8080
@@ -77,11 +77,15 @@ hindsight review --status proposed
 ## 4. Deploy with your own knowledge remote
 
 ```sh
-cp .env.example .env
+mkdir hindsight-server && cd hindsight-server
+curl -fsSLO https://raw.githubusercontent.com/DrDroidLab/hindsight/main/compose.yaml
+curl -fsSL https://raw.githubusercontent.com/DrDroidLab/hindsight/main/.env.example -o .env
 # Set GIT_REMOTE to a dedicated, sanitized repository and configure git credentials privately.
-docker compose up --build -d
+docker compose up -d
 docker compose exec hindsight hindsight admin bootstrap
 ```
+
+Use a different directory from the demo: Compose names the data volume after the directory, so this keeps demo data out of your deployment. Pin `HINDSIGHT_IMAGE` in `.env` to a released version rather than `latest`.
 
 `GIT_REMOTE` is the only required setting. Everything else is optional and unlocks one feature each:
 

@@ -1,3 +1,5 @@
+<!-- mcp-name: io.github.DrDroidLab/hindsight-sre -->
+
 <p align="center">
   <img src="docs/assets/logo.svg" width="64" height="64" alt="Hindsight logo">
 </p>
@@ -43,12 +45,12 @@ Everything is typed Markdown in a git remote you control, every commit carries t
 
 ## Quickstart
 
-Requires Docker with Compose v2 and git. The demo runs offline with a seeded sample repo, no model provider and no git credentials.
+Requires Docker with Compose v2. The demo pulls the published image (`ghcr.io/drdroidlab/hindsight`) and runs offline with a seeded sample repo, no model provider and no git credentials.
 
 ```sh
-git clone https://github.com/DrDroidLab/hindsight.git
-cd hindsight
-docker compose -f compose.yaml -f compose.demo.yaml up --build -d
+mkdir hindsight && cd hindsight
+curl -fsSLO https://raw.githubusercontent.com/DrDroidLab/hindsight/main/compose.yaml -O https://raw.githubusercontent.com/DrDroidLab/hindsight/main/compose.demo.yaml
+docker compose -f compose.yaml -f compose.demo.yaml up -d
 docker compose exec hindsight hindsight admin bootstrap
 ```
 
@@ -56,9 +58,10 @@ Open <http://localhost:8080/setup>, paste the enrollment token, save the API key
 
 ### Connect your agent
 
+Each engineer installs the `hindsight-sre` CLI from PyPI (`pipx install hindsight-sre` works too):
+
 ```sh
-python3.12 -m venv .venv && . .venv/bin/activate
-pip install .
+uv tool install hindsight-sre
 hindsight login --server http://localhost:8080 --scope shared
 hindsight install claude --server http://localhost:8080   # or cursor, codex, gemini
 ```
@@ -93,6 +96,8 @@ Redaction runs in the agent hook and again on the server, but it is best effort:
 Early-stage, v0.1. The automated suite (Python, frontend, and an offline Docker smoke test) passes in CI. Live agent clients and live LLM providers have not yet been certified; per-client hook support and limits are documented in [Connect your agent](https://drdroidlab.github.io/hindsight/agents/), and the [verification record](https://drdroidlab.github.io/hindsight/verification/) lists exactly what has and has not been checked.
 
 ## Development
+
+Working from a clone, `docker compose up --build` builds the image from your checkout instead of pulling it.
 
 ```sh
 pip install -e '.[dev]'
