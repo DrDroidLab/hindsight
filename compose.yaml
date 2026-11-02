@@ -1,0 +1,37 @@
+services:
+  hindsight:
+    image: hindsight-sre:local
+    build: .
+    restart: unless-stopped
+    init: true
+    ports:
+      - "127.0.0.1:${HINDSIGHT_PORT:-8080}:8080"
+    environment:
+      GIT_REMOTE: ${GIT_REMOTE:-}
+      GIT_BRANCH: ${GIT_BRANCH:-main}
+      HINDSIGHT_DATA_DIR: /data
+      DATA_DIR: /data
+      SYNC_INTERVAL: ${SYNC_INTERVAL:-60}
+      STALE_AFTER_DAYS: ${STALE_AFTER_DAYS:-90}
+      READ_ONLY: ${READ_ONLY:-false}
+      REVIEW_MODE: ${REVIEW_MODE:-local}
+      PROPOSAL_BRANCH: ${PROPOSAL_BRANCH:-hindsight/proposals}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-}
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-}
+      LLM_ENDPOINT: ${LLM_ENDPOINT:-}
+      LLM_MODEL: ${LLM_MODEL:-}
+      LLM_KEY: ${LLM_KEY:-}
+      EMBEDDINGS_ENDPOINT: ${EMBEDDINGS_ENDPOINT:-}
+      EMBEDDINGS_MODEL: ${EMBEDDINGS_MODEL:-}
+      EMBEDDINGS_KEY: ${EMBEDDINGS_KEY:-}
+      REDACTION_RULES: ${REDACTION_RULES:-}
+    volumes:
+      - hindsight_data:/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    stop_grace_period: 30s
+volumes:
+  hindsight_data:

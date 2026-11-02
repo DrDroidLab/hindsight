@@ -1,0 +1,22 @@
+{
+  "name": "hindsight-sre-review",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && node build.mjs",
+    "test": "tsx --test src/*.test.ts"
+  },
+  "dependencies": {
+    "markdown-it": "14.3.3"
+  },
+  "devDependencies": {
+    "@types/jsdom": "21.1.7",
+    "@types/markdown-it": "14.1.2",
+    "@types/node": "22.10.2",
+    "esbuild": "0.25.12",
+    "jsdom": "26.1.0",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3"
+  }
+}

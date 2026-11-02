@@ -1,0 +1,22 @@
+# Illustrative nginx TLS virtual-host fragment. Supply valid TLS certs separately.
+# Bind upstream privately; set exact ALLOWED_HOSTS/ALLOWED_ORIGINS and
+# PUBLIC_ORIGIN=https://hindsight.example.invalid in Hindsight.
+server {
+    listen 443 ssl;
+    server_name hindsight.example.invalid;
+    ssl_certificate /run/secrets/tls.crt;
+    ssl_certificate_key /run/secrets/tls.key;
+    client_max_body_size 128k;
+    access_log off;
+    error_log /var/log/nginx/hindsight-error.log warn;
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_request_buffering off;
+        proxy_buffering off;
+        proxy_http_version 1.1;
+        proxy_read_timeout 65s;
+    }
+}

@@ -1,0 +1,17 @@
+.git
+.venv
+**/__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+web/node_modules
+.env
+.env.*
+!.env.example
+data
+demo
+*.sqlite*
+*.pem
+*.key
+dist
+build

@@ -1,0 +1,6 @@
+# Offline sample remote and clone live in the same persistent data volume.
+services:
+  hindsight:
+    command: ["demo", "--serve", "--host", "0.0.0.0", "--port", "8080"]
+    environment:
+      GIT_REMOTE: /data/demo-remote.git
