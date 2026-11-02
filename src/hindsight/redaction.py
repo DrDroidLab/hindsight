@@ -42,7 +42,8 @@ class Redactor:
                 r"|(?:customer|cust|tenant)(?:[ _-]?id)?(?:\s*[:=#]\s*|\s+)"
                 r"(?=[A-Za-z0-9-]*\d)[A-Za-z0-9-]{4,})\b",
             ),
-            ("ip", r"(?<![\w.])(?:\d{1,3}\.){3}\d{1,3}(?![\w.])"),
+            # A trailing "." ends a sentence; only ".<digit>" means a longer dotted number.
+            ("ip", r"(?<![\w.])(?:\d{1,3}\.){3}\d{1,3}(?!\w|\.\d)"),
             ("ipv6", r"(?<![\w:])(?:[0-9a-fA-F]{0,4}:){2,}[0-9a-fA-F:]{0,39}(?![\w:])"),
         ]
         if rules_path:
