@@ -38,6 +38,9 @@ jobs:
             type=pep440,pattern={{version}}
             type=pep440,pattern={{major}}.{{minor}}
             type=sha,enable=${{ github.event_name == 'workflow_dispatch' }}
+          labels: |
+            org.opencontainers.image.title=Hindsight SRE
+            io.modelcontextprotocol.server.name=io.github.DrDroidLab/hindsight-sre
       - name: Build amd64 image for the smoke test
         uses: docker/build-push-action@v6
         with:

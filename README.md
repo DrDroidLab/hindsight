@@ -1,3 +1,5 @@
+<!-- mcp-name: io.github.DrDroidLab/hindsight-sre -->
+
 <p align="center">
   <img src="docs/assets/logo.svg" width="64" height="64" alt="Hindsight logo">
 </p>

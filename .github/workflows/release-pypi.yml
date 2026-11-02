@@ -26,6 +26,10 @@ jobs:
             echo "::error::Tag ${GITHUB_REF_NAME} does not match pyproject.toml version ${version}"
             exit 1
           fi
+          if ! python -c 'import json, sys; s = json.load(open("server.json")); sys.exit(any(v != sys.argv[1] for v in [s["version"], *(p["version"] for p in s["packages"])]))' "${version}"; then
+            echo "::error::server.json versions do not match pyproject.toml version ${version}"
+            exit 1
+          fi
       - name: Use a unique dev version for the TestPyPI dry run
         if: github.event_name == 'workflow_dispatch'
         run: sed -i -E "s/^version = \"([^\"]+)\"/version = \"\1.dev${GITHUB_RUN_NUMBER}\"/" pyproject.toml
